@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -21,6 +22,7 @@ import java.util.UUID;
 class UserServiceImplTest {
 
     @Mock private UserRepository userRepository;
+    @Mock private PasswordEncoder passwordEncoder;
     @InjectMocks private UserServiceImpl userService;
 
     @Test
@@ -59,6 +61,7 @@ class UserServiceImplTest {
         payload.setPassword("password");
 
         Mockito.when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+        Mockito.when(passwordEncoder.encode(payload.getPassword())).thenReturn("password");
         Mockito.when(userRepository.save(user)).thenReturn(user);
 
         UserDto result = userService.createUser(payload);

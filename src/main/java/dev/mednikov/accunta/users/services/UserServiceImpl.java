@@ -8,6 +8,7 @@ import dev.mednikov.accunta.users.exceptions.UserNotFoundException;
 import dev.mednikov.accunta.users.models.User;
 import dev.mednikov.accunta.users.repositories.UserRepository;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -20,9 +21,11 @@ public class UserServiceImpl implements UserService {
     private final static UserDtoMapper userDtoMapper = new UserDtoMapper();
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -32,7 +35,7 @@ public class UserServiceImpl implements UserService {
         }
         User user = new User();
         user.setEmail(payload.getEmail());
-        user.setPassword(payload.getPassword());
+        user.setPassword(this.passwordEncoder.encode(payload.getPassword()));
         user.setFirstName(payload.getFirstName());
         user.setLastName(payload.getLastName());
 
